@@ -31,6 +31,7 @@ Bubble Popper is a simple one-screen mobile game where:
 ## File Structure
 
 ```
+# All work is actually done in the GameScreen.js file
 BubblePopper/
 ├── App.js                 # Main app component that registers GameScreen
 ├── GameScreen.js          # Game logic & hooks
