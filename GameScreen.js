@@ -34,7 +34,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Bubble from './components/Bubble';
 import {Animated, PanResponder} from 'react-native';
-//import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -69,17 +68,10 @@ export default function GameScreen() {
    */
   
   // Fixed gun position - currently in the middle (MODIFY THIS)
+
 const gunWidth = 60;
 
-const [gunPosition, setGunPosition] = useState({'x': (screenWidth / 2 - gunWidth / 2)
-});
-
-//const handleTouchMove = (event) => {
-//  let { locationX } = event.nativeEvent;
-//  setGunPosition({'x': locationX});
-//  // Apply constraints to keep gun on screen
-////  setGunPosition({ x: locationX - gunWidth/2, y: locationY });
-//};
+const [gunPosition, setGunPosition] = useState({'x': (screenWidth / 2 - gunWidth / 2)});
 
 //  const gunPosition = screenWidth / 2 - gunWidth / 2;
 //const gunPosition = handleTouchMove(event);
@@ -113,18 +105,12 @@ const [gunPosition, setGunPosition] = useState({'x': (screenWidth / 2 - gunWidth
    * Currently fires the laser on any tap when game is active
    */
 
+// Help from Alexander Moyles on why my usage of event.nativeEvent wasn't working.
   const handleTap = (event) => {
     if (!gameStarted || gameOver) return;
-    const locationX = event.nativeEvent;
-    console.log(event.nativeEvent);
+    const {locationX} = event.nativeEvent;
     setGunPosition({'x': locationX - gunWidth / 2});
   };
-
-  const shootLaser = () => {
-      fireLaser();
-  };
-
-//  const gunCenterX = handleTap(event);
   
   /**
    * Fire a laser from the gun center
@@ -316,13 +302,13 @@ const [gunPosition, setGunPosition] = useState({'x': (screenWidth / 2 - gunWidth
   }, []);
   
   return (
-    <TouchableWithoutFeedback onPress={shootLaser}>
-        <View style={styles.shootArea}></View>
-    </TouchableWithoutFeedback>
 
     <View style={styles.container}>
+    <TouchableWithoutFeedback onPressIn={handleTap}>
+        <View style={styles.triggerArea}></View>
+    </TouchableWithoutFeedback>
       {/* Game area */}
-      <TouchableWithoutFeedback onPress={handleTap} disabled={!gameStarted || gameOver}>
+      <TouchableWithoutFeedback onPress={fireLaser} disabled={!gameStarted || gameOver}>
         <View style={styles.gameArea}>
           {/* Bubbles */}
           {bubbles.map(bubble => (
@@ -365,7 +351,7 @@ const [gunPosition, setGunPosition] = useState({'x': (screenWidth / 2 - gunWidth
            */}
           
           {/* Gun - currently static in middle */}
-          <View style={[styles.gun, { left: gunPosition }]}>
+          <View style={[styles.gun, { left: gunPosition.x }]}>
             <View style={styles.gunBase} />
             <View style={styles.gunBarrel} />
           </View>
@@ -475,7 +461,7 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 50,
+    zIndex: 300,
     backgroundColor: '#555',
     borderRadius: 5,
   },
@@ -499,27 +485,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: 4,
-    height: '90%',
+    height: '95%',
     backgroundColor: '#ff0000',
     shadowColor: '#ff0000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 10,
-    elevation: 20,
-    zIndex: 90,
+    elevation: 15,
   },
-  bottomArea: {
-    padding: 20,
-    backgroundColor: '#3498db',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  shootArea: {
+  triggerArea: {
     position: 'absolute',
     bottom: 1,
     width: '100%',
-    height: '8%',
+    height: '5%',
     backgroundColor: 'red',
-    justifyContent: 'flex-end'
+    zIndex: 10,
     }
 });
