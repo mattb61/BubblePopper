@@ -300,15 +300,17 @@ const [gunPosition, setGunPosition] = useState({'x': (screenWidth / 2 - gunWidth
       if (laserTimeoutRef.current) clearTimeout(laserTimeoutRef.current);
     };
   }, []);
-  
+
   return (
 
     <View style={styles.container}>
-    <TouchableWithoutFeedback onPressIn={handleTap}>
+      {/* This section keeps the laser from firing unless a long tap is used in the specified area */}
+      {/* Help from Alexander Moyles on implementing the trigger-restriction area */}
+    <TouchableWithoutFeedback onPressIn={handleTap} onLongPress={fireLaser}>
         <View style={styles.triggerArea}></View>
     </TouchableWithoutFeedback>
       {/* Game area */}
-      <TouchableWithoutFeedback onPress={fireLaser} disabled={!gameStarted || gameOver}>
+      <TouchableWithoutFeedback disabled={!gameStarted || gameOver}>
         <View style={styles.gameArea}>
           {/* Bubbles */}
           {bubbles.map(bubble => (
@@ -456,12 +458,12 @@ const styles = StyleSheet.create({
   },
   gun: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 1,
     width: 60,
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 300,
+    zIndex: 5,
     backgroundColor: '#555',
     borderRadius: 5,
   },
